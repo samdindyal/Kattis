@@ -45,7 +45,7 @@ int main(void) {
 float calculate_distance(Point *p1, Point *p2) {
 	float dx = (p1->x - p2->x),
 	 dy = (p1->y - p2->y);
-	return sqrt((dx * dx) + (dy * dy));
+	return sqrt((dx*dx) + (dy*dy));
 }
 
 int compareX(const void* _p1, const void* _p2) {
@@ -72,8 +72,8 @@ PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 		for (int j = i+1; j < n; j++)
 		{
 			current_difference->difference = calculate_distance(&(points[i]), &(points[j]));
-			current_difference->p1 = points[i];
-			current_difference->p2 = points[j];
+			current_difference->p1 = points[j];
+			current_difference->p2 = points[i];
 
 			if (current_difference->difference < minimum_difference->difference)
 				*minimum_difference = *current_difference;
@@ -99,7 +99,7 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 
 	int size = 0;
 
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n-1; i++)
 		if (fabs(points[i].x - median.x) < min->difference)
 		{
 			closer_points[size] = points[i];
@@ -115,8 +115,8 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	for (int i = 0; i < size-1; i++)
 		for (int k = i+1; k < size && fabs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
 		{
-			current_distance->p1 = closer_points[i];
-			current_distance->p2 = closer_points[k];
+			current_distance->p1 = closer_points[k];
+			current_distance->p2 = closer_points[i];
 			current_distance->difference = calculate_distance(&closer_points[k], &closer_points[i]);
 
 			if (current_distance->difference < min->difference)
