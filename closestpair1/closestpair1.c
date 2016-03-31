@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <float.h>
-#include <string.h>
 
 typedef struct Point {
 	float x, y;
@@ -16,11 +13,11 @@ typedef struct PointDifference {
 float calculate_distance(Point*, Point*);
 PointDifference* calculate_closest_pair_brute_force(Point*, int);
 PointDifference* calculate_closest_pair_recursive(Point*, int);
-int compareX(const void*, const void*);
-int compareY(const void*, const void*);
+void quick_sort_by_x(Point*, int, int);
+void quick_sort_by_y(Point*, int, int);
 
 int main(void) {
-	int num_points;
+	int num_points = 1;
 	Point *points;
 
 	while (num_points > 0)
@@ -33,9 +30,11 @@ int main(void) {
 		for (int i = 0; i < num_points; i++)
 			if (!scanf("%f %f", &(points[i].x), &(points[i].y)))
 				exit(1);
+		quick_sort_by_x(points, 0, num_points-1);
+		PointDifference *solution;
+		
+        solution = calculate_closest_pair_brute_force(points, num_points);
 
-		qsort(points, num_points, sizeof(Point), compareX);
-		PointDifference *solution = calculate_closest_pair_recursive(points, num_points);
 		printf("%.2f %.2f %.2f %.2f\n", solution->p1.x, solution->p1.y, solution->p2.x, solution->p2.y);
 	}
 	return 0;
@@ -45,20 +44,69 @@ int main(void) {
 float calculate_distance(Point *p1, Point *p2) {
 	float dx = (p1->x - p2->x),
 	 dy = (p1->y - p2->y);
-	return sqrt((dx*dx) + (dy*dy));
+	return ((dx*dx) + (dy*dy));
 }
 
-int compareX(const void* _p1, const void* _p2) {
-	Point *p1 = (Point*)_p1;
-	Point *p2 = (Point*)_p2;
-	return (p1->x - p2->x);
+void quick_sort_by_x(Point *array, int lower_bound, int upper_bound) {
+  int pivot, i, j;
+  Point temp;
+
+  if (lower_bound < upper_bound) {
+    pivot = lower_bound;
+    i = lower_bound;
+    j = upper_bound;
+
+    while (i < j) {
+      while (array[i].x <= array[pivot].x && i < upper_bound)
+        i++;
+      while (array[j].x > array[pivot].x)
+        j--;
+      if (i < j) {
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+
+    temp = array[pivot];
+    array[pivot] = array[j];
+    array[j] = temp;
+
+    quick_sort_by_x(array, lower_bound, j - 1);
+    quick_sort_by_x(array, j + 1, upper_bound);
+  }
 }
 
-int compareY(const void* _p1, const void* _p2) {
-	Point *p1 = (Point*)_p1;
-	Point *p2 = (Point*)_p2;
-	return (p1->y - p2->y);
+void quick_sort_by_y(Point *array, int lower_bound, int upper_bound) {
+  int pivot, i, j;
+  Point temp;
+
+  if (lower_bound < upper_bound) {
+    pivot = lower_bound;
+    i = lower_bound;
+    j = upper_bound;
+
+    while (i < j) {
+      while (array[i].y <= array[pivot].y && i < upper_bound)
+        i++;
+      while (array[j].y > array[pivot].y)
+        j--;
+      if (i < j) {
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+
+    temp = array[pivot];
+    array[pivot] = array[j];
+    array[j] = temp;
+
+    quick_sort_by_y(array, lower_bound, j - 1);
+    quick_sort_by_y(array, j + 1, upper_bound);
+  }
 }
+
 
 PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 	
@@ -66,14 +114,14 @@ PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 	minimum_difference = (PointDifference*)malloc(sizeof(PointDifference));
 	current_difference = (PointDifference*)malloc(sizeof(PointDifference));
 
-	minimum_difference->difference = FLT_MAX;
+	minimum_difference->difference = 340282346638528859811704183484516925440.0;
 
 	for (int i = 0; i < n-1; i++)
 		for (int j = i+1; j < n; j++)
 		{
 			current_difference->difference = calculate_distance(&(points[i]), &(points[j]));
-			current_difference->p1 = points[j];
-			current_difference->p2 = points[i];
+			current_difference->p1 = points[i];
+			current_difference->p2 = points[j];
 
 			if (current_difference->difference < minimum_difference->difference)
 				*minimum_difference = *current_difference;
@@ -84,7 +132,26 @@ PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 
 PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	if (n <= 3)
-		return calculate_closest_pair_brute_force(points, n);
+	{
+		PointDifference *minimum_difference, *current_difference;
+		minimum_difference = (PointDifference*)malloc(sizeof(PointDifference));
+		current_difference = (PointDifference*)malloc(sizeof(PointDifference));
+
+		minimum_difference->difference = 340282346638528859811704183484516925440.0;
+
+		for (int i = 0; i < n-1; i++)
+			for (int j = i+1; j < n; j++)
+			{
+				current_difference->difference = calculate_distance(&(points[i]), &(points[j]));
+				current_difference->p1 = points[j];
+				current_difference->p2 = points[i];
+
+				if (current_difference->difference < minimum_difference->difference)
+					*minimum_difference = *current_difference;
+			}
+
+		return minimum_difference;
+	}
 	
 	int mid = n/2;
 	PointDifference *left = calculate_closest_pair_recursive(points, mid);
@@ -100,23 +167,23 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	int size = 0;
 
 	for (int i = 0; i < n-1; i++)
-		if (fabs(points[i].x - median.x) < min->difference)
+		if (abs(points[i].x - median.x) < min->difference)
 		{
 			closer_points[size] = points[i];
 			size++;
 		}
 
-	qsort(closer_points, size, sizeof(Point), compareY);
+	quick_sort_by_y(closer_points, 0, size-1);
 
 	PointDifference *current_distance;
 	current_distance = (PointDifference*)malloc(sizeof(PointDifference));
-	current_distance->difference = FLT_MAX;
+	current_distance->difference = 340282346638528859811704183484516925440.0;
 
 	for (int i = 0; i < size-1; i++)
-		for (int k = i+1; k < size && fabs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
+		for (int k = i+1; k < size && abs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
 		{
-			current_distance->p1 = closer_points[k];
-			current_distance->p2 = closer_points[i];
+			current_distance->p1 = closer_points[i];
+			current_distance->p2 = closer_points[k];
 			current_distance->difference = calculate_distance(&closer_points[k], &closer_points[i]);
 
 			if (current_distance->difference < min->difference)
