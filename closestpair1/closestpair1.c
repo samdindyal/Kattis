@@ -134,7 +134,7 @@ PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 }
 
 PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
-	if (n <= 3)
+	if (n <= 10)
 		return calculate_closest_pair_brute_force(points, n);
 	
 	int mid = n/2;
