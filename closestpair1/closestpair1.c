@@ -151,7 +151,7 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	int size = 0;
 
 	for (int i = 0; i < n-1; i++)
-		if (abs(points[i].x - median.x) < min->difference)
+		if (fabs(points[i].x - median.x) < min->difference)
 		{
 			closer_points[size] = points[i];
 			size++;
@@ -164,7 +164,7 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	current_distance->difference = MAX;
 
 	for (int i = 0; i < size-1; i++)
-		for (int k = i+1; k < size && abs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
+		for (int k = i+1; k < size && fabs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
 		{
 			current_distance->p1 = closer_points[i];
 			current_distance->p2 = closer_points[k];
