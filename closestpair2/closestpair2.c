@@ -161,9 +161,10 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	current_distance->difference = DBL_MAX;
 
 	for (int i = 0; i < size-1; i++)
+	{
+		current_distance->p1 = closer_points[i];
 		for (int k = i+1; k < size && fabs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
 		{
-			current_distance->p1 = closer_points[i];
 			current_distance->p2 = closer_points[k];
 			current_distance->difference = calculate_distance(&closer_points[k], &closer_points[i]);
 
@@ -173,6 +174,7 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 				current_distance = (PointDifference*)malloc(sizeof(PointDifference));
 			}
 		}
+	}
 
 	return min;
 }

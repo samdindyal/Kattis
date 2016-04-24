@@ -35,7 +35,7 @@ int main(void) {
 				exit(1);
 		quick_sort_by_x(points, 0, num_points-1);
 		PointDifference *solution;
-		
+
         solution = calculate_closest_pair_recursive(points, num_points);
 
 		printf("%.2f %.2f %.2f %.2f\n", solution->p1.x, solution->p1.y, solution->p2.x, solution->p2.y);
@@ -112,7 +112,7 @@ void quick_sort_by_y(Point *array, int lower_bound, int upper_bound) {
 
 
 PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
-	
+
 	PointDifference *minimum_difference, *current_difference;
 	minimum_difference = (PointDifference*)malloc(sizeof(PointDifference));
 	current_difference = (PointDifference*)malloc(sizeof(PointDifference));
@@ -136,7 +136,7 @@ PointDifference* calculate_closest_pair_brute_force(Point *points, int n) {
 PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	if (n <= 10)
 		return calculate_closest_pair_brute_force(points, n);
-	
+
 	int mid = n/2;
 	PointDifference *left = calculate_closest_pair_recursive(points, mid);
 	PointDifference *right = calculate_closest_pair_recursive(points + mid, n - mid);
@@ -151,11 +151,13 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	int size = 0;
 
 	for (int i = 0; i < n-1; i++)
-		if (fabs(points[i].x - median.x) < min->difference)
-		{
-			closer_points[size] = points[i];
-			size++;
-		}
+	{
+			if (fabs(points[i].x - median.x) < min->difference)
+			{
+				closer_points[size] = points[i];
+				size++;
+			}
+	}
 
 	quick_sort_by_y(closer_points, 0, size-1);
 
@@ -164,9 +166,10 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 	current_distance->difference = MAX;
 
 	for (int i = 0; i < size-1; i++)
+	{
+		current_distance->p1 = closer_points[i];
 		for (int k = i+1; k < size && fabs(closer_points[k].y - closer_points[i].y) < min->difference; k++)
 		{
-			current_distance->p1 = closer_points[i];
 			current_distance->p2 = closer_points[k];
 			current_distance->difference = calculate_distance(&closer_points[k], &closer_points[i]);
 
@@ -176,7 +179,7 @@ PointDifference* calculate_closest_pair_recursive(Point *points, int n) {
 				current_distance = (PointDifference*)malloc(sizeof(PointDifference));
 			}
 		}
+	}
 
 	return min;
 }
-
