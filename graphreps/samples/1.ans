@@ -1,0 +1,15 @@
+* a b c d e f
+a 0 0 1 1 0 0
+b 0 0 1 0 0 1
+c 1 1 0 0 1 0
+d 1 0 0 0 1 0
+e 0 0 1 1 0 1
+f 0 1 0 0 1 0
+
+a | c d
+b | c f
+c | a b e
+d | a e
+e | c d f
+f | b e
+
